@@ -3,28 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Votación de Obras</title>
+    <title>Votación Cuadro 13vo Aniversario VEN 9-1-1</title>
+    <link rel="stylesheet" href="./index.css" />
   </head>
-  <link rel="stylesheet" href="./index.css" />
   <body>
-    <h1>Votación de Obras</h1>
-    <p class="subtitulo">
-      Haz clic en una imagen para ampliarla o en el botón para seleccionarla.
-    </p>
+    <h1>13vo Aniversario VEN 9-1-1</h1>
+    <p class="subtitulo">Votación oficial de cuadros y obras participantes.</p>
 
-    <!-- Panel Votante -->
+    <!-- Panel Votante con Selector Adaptable -->
     <div class="panel">
-      <label for="select-votante">Indica tu entidad / equipo:</label>
-      <select id="select-votante">
-        <option value="">-- Selecciona quién eres --</option>
-      </select>
+      <label>Indica tu sede, dirección o rol:</label>
+
+      <div class="custom-dropdown" id="dropdown-contenedor">
+        <button type="button" class="dropdown-btn" id="dropdown-btn">
+          <span id="dropdown-texto">-- Selecciona quién eres --</span>
+          <span class="dropdown-arrow"></span>
+        </button>
+
+        <ul class="dropdown-menu" id="dropdown-menu">
+          <li
+            class="dropdown-item jurado-item"
+            data-value="JURADO"
+            data-nombre="Jurado Calificador"
+          >
+            ⭐ Jurado Calificador
+          </li>
+          <!-- Las sedes se cargarán aquí -->
+        </ul>
+      </div>
+
       <span id="badge-estado" class="badge-fijado"></span>
     </div>
 
     <!-- Catálogo de obras -->
     <div id="grid-obras" class="grid-obras"></div>
 
-    <!-- Confirmación de voto -->
+    <!-- Panel de confirmación -->
     <div
       id="panel-confirmacion"
       class="panel"
@@ -40,13 +54,12 @@
       ></div>
     </div>
 
-    <!-- Visor emergente (Lightbox) -->
+    <!-- Visor de imagen (Lightbox) -->
     <div id="lightbox-modal" class="lightbox-modal">
       <button class="lightbox-close" id="lightbox-close">&times;</button>
       <img id="lightbox-img" class="lightbox-img" src="" alt="Ampliación" />
       <div id="lightbox-caption" class="lightbox-caption"></div>
     </div>
-
     <script src="./index.js"></script>
   </body>
 </html>
