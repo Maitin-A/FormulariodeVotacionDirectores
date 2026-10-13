@@ -1,13 +1,11 @@
 :root {
   --primary: #0284c7;
+  --primary-hover: #0369a1;
   --bg: #f8fafc;
   --card-border: #e2e8f0;
   --selected-border: #0284c7;
 }
 
-* {
-  box-sizing: border-box;
-}
 body {
   font-family:
     system-ui,
@@ -19,21 +17,24 @@ body {
   background-color: var(--bg);
   color: #0f172a;
   padding: 20px;
-  max-width: 850px;
+  max-width: 900px;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
-h1,
-h2 {
+h1 {
   text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 6px;
 }
 p.subtitulo {
   text-align: center;
   color: #64748b;
-  margin-top: -8px;
+  margin-top: 0;
   margin-bottom: 24px;
 }
 
+/* IMPORTANTE: overflow visible para evitar recortes de menú */
 .panel {
   background: white;
   border-radius: 12px;
@@ -41,39 +42,148 @@ p.subtitulo {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   border: 1px solid var(--card-border);
   margin-bottom: 24px;
+  position: relative;
+  overflow: visible !important;
 }
 
 label {
-  font-weight: 600;
+  font-weight: 700;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  font-size: 1.05rem;
 }
-select {
+
+/* --- SELECTOR PERSONALIZADO QUE NUNCA SE CORTA --- */
+.custom-dropdown {
+  position: relative;
   width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
+  user-select: none;
 }
-select:disabled {
-  background-color: #f1f5f9;
-  color: #475569;
+
+.dropdown-btn {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.dropdown-btn:hover {
+  border-color: var(--primary);
+}
+.dropdown-btn.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.dropdown-btn:disabled {
+  background: #f1f5f9;
+  color: #64748b;
   cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.dropdown-arrow {
+  border: solid #64748b;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 4px;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.dropdown-btn.active .dropdown-arrow {
+  transform: rotate(-135deg);
+}
+
+/* Lista desplegable con scroll interno asegurado */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: 280px; /* Altura ideal con scroll */
+  overflow-y: auto !important; /* Permite desplazarse por todas las opciones */
+  background: #ffffff;
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 1000; /* Siempre encima de cualquier otro elemento */
+  list-style: none;
+  padding: 6px 0;
+  margin: 0;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+/* Barra de scroll estilizada */
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+.dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dropdown-item {
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #1e293b;
+  transition: background 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background: #f0f9ff;
+  color: var(--primary);
+}
+
+.dropdown-item.jurado-item {
+  font-weight: 700;
+  color: #854d0e;
+  background: #fefce8;
+  border-bottom: 1px solid #fef08a;
+}
+
+.dropdown-item.jurado-item:hover {
+  background: #fef9c3;
+  color: #713f12;
 }
 
 .badge-fijado {
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 0.85rem;
   color: #0369a1;
   font-weight: 600;
 }
 
-/* Cuadrícula de obras */
+/* --- CUADRÍCULA DE OBRAS --- */
 .grid-obras {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -87,14 +197,12 @@ select:disabled {
   flex-direction: column;
   align-items: center;
   transition: all 0.2s;
-  position: relative;
 }
 
-/* Contenedor de la miniatura con hint de lupa */
 .img-wrapper {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 190px;
   cursor: zoom-in;
   overflow: hidden;
   border-radius: 8px;
@@ -127,6 +235,7 @@ select:disabled {
 .card-obra h3 {
   margin: 12px 0 8px;
   font-size: 1.1rem;
+  text-align: center;
 }
 
 .card-obra.selected {
@@ -137,7 +246,7 @@ select:disabled {
 
 .btn-select {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   margin-top: auto;
   border: 1px solid var(--card-border);
   border-radius: 6px;
@@ -155,7 +264,7 @@ select:disabled {
 .btn-submit {
   width: 100%;
   max-width: 340px;
-  padding: 12px 24px;
+  padding: 14px 24px;
   background: #16a34a;
   color: white;
   border: none;
@@ -169,11 +278,11 @@ select:disabled {
   cursor: not-allowed;
 }
 
-/* Modal / Lightbox para ampliar imagen */
+/* Lightbox Modal */
 .lightbox-modal {
   display: none;
   position: fixed;
-  z-index: 9999;
+  z-index: 99999;
   top: 0;
   left: 0;
   width: 100%;
@@ -194,7 +303,6 @@ select:disabled {
   max-width: 90vw;
   max-height: 80vh;
   border-radius: 10px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
   object-fit: contain;
 }
 
@@ -215,5 +323,4 @@ select:disabled {
   cursor: pointer;
   background: transparent;
   border: none;
-  line-height: 1;
 }
