@@ -332,7 +332,7 @@ btnEnviar.addEventListener("click", async () => {
   mensajeEstado.style.color = "#475569";
 
   const payload = {
-  tipo: "jurado",                     // <-- Palabra clave para la pestaña de Jurado
+  tipo: "Jurado",                     // <-- Palabra clave para la pestaña de Jurado
   votante: votanteActualNombre,
   votoPor: obraSeleccionada.nombre
 };
