@@ -332,10 +332,10 @@ btnEnviar.addEventListener("click", async () => {
   mensajeEstado.style.color = "#475569";
 
   const payload = {
-    tipo: esJurado ? "jurado" : "linea",
-    votante: nombreVotante,
-    votoPor: obraSeleccionada.nombre,
-  };
+  pestana: "Votos Directores  Jurado", // (ojo: en tu archivo esta hoja tiene dos espacios entre Directores y Jurado)
+  votante: votanteActualNombre,
+  votoPor: obraSeleccionada.nombre
+};
 
   try {
     await fetch(URL_APPS_SCRIPT, {
