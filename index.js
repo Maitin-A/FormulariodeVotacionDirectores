@@ -332,7 +332,7 @@ btnEnviar.addEventListener("click", async () => {
   mensajeEstado.style.color = "#475569";
 
   const payload = {
-  pestana: "Votos Directores  Jurado", // (ojo: en tu archivo esta hoja tiene dos espacios entre Directores y Jurado)
+  tipo: "jurado",                     // <-- Palabra clave para la pestaña de Jurado
   votante: votanteActualNombre,
   votoPor: obraSeleccionada.nombre
 };
