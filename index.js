@@ -144,7 +144,7 @@ const SEDES = [
   },
 ];
 let obraSeleccionada = null;
-let votanteActualId = null;
+let votanteActualNombre = null;
 
 // Elementos del selector
 const dropdownBtn = document.getElementById("dropdown-btn");
@@ -333,7 +333,7 @@ btnEnviar.addEventListener("click", async () => {
 
   const payload = {
   tipo: "jurado",                     // <-- Palabra clave para la pestaña de Jurado
-  votante: votanteActualId,
+  votante: votanteActualNombre,
   votoPor: obraSeleccionada.nombre
 };
 
