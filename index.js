@@ -1,7 +1,7 @@
 const URL_APPS_SCRIPT =
   "https://script.google.com/macros/s/AKfycbzx3vrD4zyZZ-o0LgjCnPuUy6jyn1j7mcpi3tWiy-ejVpCZh5n-zuqY7Tuazp4RDs34_w/exec";
 
-const ENTIDADES = [
+const SEDES = [
   {
     id: "ent_1",
     nombre: "Altos Mirandinos",
@@ -143,76 +143,110 @@ const ENTIDADES = [
     imagenUrl: "./imagenes/10.png",
   },
 ];
+let obraSeleccionada = null;
+let votanteActualId = null;
 
-let entidadSeleccionada = null;
-
-const selectVotante = document.getElementById("select-votante");
+// Elementos del selector
+const dropdownBtn = document.getElementById("dropdown-btn");
+const dropdownMenu = document.getElementById("dropdown-menu");
+const dropdownTexto = document.getElementById("dropdown-texto");
 const badgeEstado = document.getElementById("badge-estado");
+
+// Contenedores
 const gridObras = document.getElementById("grid-obras");
 const panelConfirmacion = document.getElementById("panel-confirmacion");
 const resumenSeleccion = document.getElementById("resumen-seleccion");
 const btnEnviar = document.getElementById("btn-enviar");
 const mensajeEstado = document.getElementById("mensaje-estado");
 
-// Elementos del visor
+// Modal
 const modal = document.getElementById("lightbox-modal");
 const modalImg = document.getElementById("lightbox-img");
 const modalCaption = document.getElementById("lightbox-caption");
 const modalClose = document.getElementById("lightbox-close");
 
-// Llenar selector
-ENTIDADES.forEach((ent) => {
-  const opt = document.createElement("option");
-  opt.value = ent.id;
-  opt.textContent = ent.nombre;
-  selectVotante.appendChild(opt);
+// 1. Poblar la lista de opciones
+SEDES.forEach((sede) => {
+  const li = document.createElement("li");
+  li.className = "dropdown-item";
+  li.dataset.value = sede.id;
+  li.dataset.nombre = sede.nombre;
+  li.textContent = sede.nombre;
+  dropdownMenu.appendChild(li);
 });
 
-// Validar bloqueos previos
-const votanteGuardado = localStorage.getItem("votante_bloqueado");
-const votoCompletado = localStorage.getItem("voto_realizado");
+// 2. Control de apertura/cierre del menú
+dropdownBtn.addEventListener("click", () => {
+  dropdownMenu.classList.toggle("show");
+  dropdownBtn.classList.toggle("active");
+});
+
+// Cerrar si se hace clic fuera del menú
+document.addEventListener("click", (e) => {
+  if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+    dropdownMenu.classList.remove("show");
+    dropdownBtn.classList.remove("active");
+  }
+});
+
+// 3. Manejar selección de ítem
+dropdownMenu.addEventListener("click", (e) => {
+  const item = e.target.closest(".dropdown-item");
+  if (!item) return;
+
+  const valor = item.dataset.value;
+  const nombre = item.dataset.nombre;
+
+  dropdownMenu.classList.remove("show");
+  dropdownBtn.classList.remove("active");
+
+  if (
+    confirm(
+      `¿Confirmas que representas a "${nombre}"?\nUna vez confirmado no podrás modificarlo.`,
+    )
+  ) {
+    localStorage.setItem("votante_bloqueado_13aniv", valor);
+    fijarIdentidad(valor, nombre);
+  }
+});
+
+// 4. Bloqueos previos en LocalStorage
+const votanteGuardado = localStorage.getItem("votante_bloqueado_13aniv");
+const votoCompletado = localStorage.getItem("voto_realizado_13aniv");
 
 if (votoCompletado) {
-  selectVotante.disabled = true;
+  dropdownBtn.disabled = true;
   gridObras.innerHTML = "";
   panelConfirmacion.style.display = "block";
   btnEnviar.style.display = "none";
   resumenSeleccion.innerHTML =
-    "<strong>Ya has emitido tu voto desde este navegador.</strong>";
+    "<strong>Ya has emitido tu voto desde este dispositivo.</strong>";
 } else if (votanteGuardado) {
-  fijarIdentidad(votanteGuardado);
+  const nombre =
+    votanteGuardado === "JURADO"
+      ? "Jurado Calificador"
+      : SEDES.find((s) => s.id === votanteGuardado)?.nombre;
+  fijarIdentidad(votanteGuardado, nombre);
 }
 
-selectVotante.addEventListener("change", (e) => {
-  const elegidaId = e.target.value;
-  if (!elegidaId) return;
-
-  const ent = ENTIDADES.find((item) => item.id === elegidaId);
-  if (
-    confirm(
-      `¿Confirmas que representas a "${ent.nombre}"?\nUna vez confirmado no podrás cambiarlo.`,
-    )
-  ) {
-    localStorage.setItem("votante_bloqueado", elegidaId);
-    fijarIdentidad(elegidaId);
-  } else {
-    selectVotante.value = "";
-  }
-});
-
-function fijarIdentidad(id) {
-  selectVotante.value = id;
-  selectVotante.disabled = true;
-  badgeEstado.textContent = "🔒 Identidad fijada. No se puede modificar.";
-  cargarOpciones(id);
+function fijarIdentidad(valor, nombre) {
+  votanteActualId = valor;
+  dropdownTexto.textContent = nombre;
+  dropdownBtn.disabled = true;
+  dropdownBtn.classList.remove("active");
+  dropdownMenu.classList.remove("show");
+  badgeEstado.textContent = `🔒 Identidad fijada: ${nombre}`;
+  cargarObras(valor);
 }
 
-function cargarOpciones(votanteId) {
+function cargarObras(votanteId) {
   gridObras.innerHTML = "";
-  entidadSeleccionada = null;
+  obraSeleccionada = null;
   btnEnviar.disabled = true;
 
-  const disponibles = ENTIDADES.filter((ent) => ent.id !== votanteId);
+  // Si es JURADO ve todas. Si es sede, se excluye la propia.
+  const disponibles =
+    votanteId === "JURADO" ? SEDES : SEDES.filter((s) => s.id !== votanteId);
 
   disponibles.forEach((item) => {
     const card = document.createElement("div");
@@ -220,35 +254,36 @@ function cargarOpciones(votanteId) {
     card.id = `card-${item.id}`;
     card.innerHTML = `
           <div class="img-wrapper" title="Haz clic para ampliar">
-            <img src="${item.imagenUrl}" alt="${item.nombre}" loading="lazy">
+            <img src="${item.imagenUrl}" alt="Obra de ${item.nombre}" loading="lazy">
             <span class="zoom-hint">🔍 Ampliar</span>
           </div>
           <h3>${item.nombre}</h3>
           <button type="button" class="btn-select">Votar por esta</button>
         `;
 
-    // Ampliar al hacer clic sobre la foto (sin activar la selección del voto)
+    // Ampliar modal
     const wrapper = card.querySelector(".img-wrapper");
     wrapper.addEventListener("click", (e) => {
-      e.stopPropagation(); // Evita que se dispare el selector de la tarjeta
+      e.stopPropagation();
       abrirModal(item.imagenUrl, item.nombre);
     });
 
-    // Botón de votación
+    // Seleccionar obra
     const btnVotar = card.querySelector(".btn-select");
-    btnVotar.addEventListener("click", () => seleccionarUnica(item));
+    btnVotar.addEventListener("click", () => seleccionarObra(item));
 
     gridObras.appendChild(card);
   });
 
-  resumenSeleccion.innerHTML = "<em>Elige una obra para emitir tu voto.</em>";
+  resumenSeleccion.innerHTML =
+    "<em>Selecciona una de las obras participantes para habilitar el voto.</em>";
   panelConfirmacion.style.display = "block";
 }
 
-// Funciones del Visor Lightbox
+// Funciones Modal
 function abrirModal(src, caption) {
   modalImg.src = src;
-  modalCaption.textContent = caption;
+  modalCaption.textContent = `Cuadro: ${caption}`;
   modal.classList.add("active");
 }
 
@@ -259,16 +294,15 @@ function cerrarModal() {
 
 modalClose.addEventListener("click", cerrarModal);
 modal.addEventListener("click", (e) => {
-  // Si hace clic en el fondo oscuro exterior, se cierra
   if (e.target === modal) cerrarModal();
 });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.classList.contains("active")) cerrarModal();
 });
 
-// Selección de voto
-function seleccionarUnica(item) {
-  entidadSeleccionada = item;
+// Seleccionar obra
+function seleccionarObra(item) {
+  obraSeleccionada = item;
   document.querySelectorAll(".card-obra").forEach((c) => {
     c.classList.remove("selected");
     c.querySelector(".btn-select").textContent = "Votar por esta";
@@ -280,22 +314,27 @@ function seleccionarUnica(item) {
     cardActual.querySelector(".btn-select").textContent = "✓ Seleccionada";
   }
 
-  resumenSeleccion.innerHTML = `Obra seleccionada: <strong>${item.nombre}</strong>`;
+  resumenSeleccion.innerHTML = `Has seleccionado la obra de: <strong>${item.nombre}</strong>`;
   btnEnviar.disabled = false;
 }
 
-// Envío a Google Sheets
+// Envío del voto
 btnEnviar.addEventListener("click", async () => {
-  if (!entidadSeleccionada) return;
+  if (!obraSeleccionada) return;
 
-  const votanteObj = ENTIDADES.find((e) => e.id === selectVotante.value);
+  const esJurado = votanteActualId === "JURADO";
+  const nombreVotante = esJurado
+    ? "Jurado Calificador"
+    : SEDES.find((s) => s.id === votanteActualId)?.nombre || votanteActualId;
+
   btnEnviar.disabled = true;
-  mensajeEstado.textContent = "Enviando voto...";
+  mensajeEstado.textContent = "Registrando tu voto...";
+  mensajeEstado.style.color = "#475569";
 
   const payload = {
-    votante: votanteObj ? votanteObj.nombre : selectVotante.value,
-    votoPor: entidadSeleccionada.nombre,
-    puntaje: 1,
+    tipo: esJurado ? "jurado" : "linea",
+    votante: nombreVotante,
+    votoPor: obraSeleccionada.nombre,
   };
 
   try {
@@ -306,14 +345,15 @@ btnEnviar.addEventListener("click", async () => {
       body: JSON.stringify(payload),
     });
 
-    localStorage.setItem("voto_realizado", "true");
+    localStorage.setItem("voto_realizado_13aniv", "true");
     gridObras.innerHTML = "";
     btnEnviar.style.display = "none";
-    resumenSeleccion.innerHTML = `Tu voto por <strong>${entidadSeleccionada.nombre}</strong> ha sido guardado.`;
+    resumenSeleccion.innerHTML = `Tu voto por <strong>${obraSeleccionada.nombre}</strong> ha sido guardado exitosamente.`;
     mensajeEstado.textContent = "¡Voto registrado con éxito!";
     mensajeEstado.style.color = "#16a34a";
   } catch (err) {
     mensajeEstado.textContent = "Error al conectar. Intenta nuevamente.";
+    mensajeEstado.style.color = "#dc2626";
     btnEnviar.disabled = false;
   }
 });
