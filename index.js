@@ -145,6 +145,7 @@ const SEDES = [
 ];
 let obraSeleccionada = null;
 let votanteActualNombre = null;
+let votanteActualId = null;
 
 // Elementos del selector
 const dropdownBtn = document.getElementById("dropdown-btn");
@@ -231,6 +232,7 @@ if (votoCompletado) {
 
 function fijarIdentidad(valor, nombre) {
   votanteActualId = valor;
+  votanteActualNombre = nombre; // <--- AGREGA ESTA LÍNEA
   dropdownTexto.textContent = nombre;
   dropdownBtn.disabled = true;
   dropdownBtn.classList.remove("active");
