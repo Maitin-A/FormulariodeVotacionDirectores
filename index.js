@@ -333,7 +333,7 @@ btnEnviar.addEventListener("click", async () => {
 
   const payload = {
   tipo: "jurado",                     // <-- Palabra clave para la pestaña de Jurado
-  votante: votanteActualNombre,
+  votante: votanteActualId,
   votoPor: obraSeleccionada.nombre
 };
 
