@@ -324,10 +324,12 @@ function seleccionarObra(item) {
 btnEnviar.addEventListener("click", async () => {
   if (!obraSeleccionada) return;
 
-  const esJurado = votanteActualId === "JURADO";
+  const esJurado = (typeof votanteActualId !== "undefined" && votanteActualId === "JURADO");
+  
+  // Obtenemos el nombre exacto de la sede:
   const nombreVotante = esJurado
     ? "Jurado Calificador"
-    : SEDES.find((s) => s.id === votanteActualId)?.nombre || votanteActualId;
+    : (SEDES.find((s) => s.id === votanteActualId)?.nombre || dropdownTexto.textContent || "Sin identificar");
 
   btnEnviar.disabled = true;
   mensajeEstado.textContent = "Registrando tu voto...";
@@ -336,7 +338,7 @@ btnEnviar.addEventListener("click", async () => {
   const payload = {
     pestana: "Votos Directores Jurado",
     tipo: "Jurado",
-    votante: nombreVotante, // <--- CAMBIA votanteActualNombre POR nombreVotante
+    votante: nombreVotante,
     votoPor: obraSeleccionada.nombre
   };
 
@@ -344,8 +346,9 @@ btnEnviar.addEventListener("click", async () => {
     await fetch(URL_APPS_SCRIPT, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      // CAMBIO CLAVE: Usa text/plain en lugar de application/json
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
     });
 
     localStorage.setItem("voto_realizado_13aniv", "true");
