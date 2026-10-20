@@ -1,0 +1,145 @@
+const URL_APPS_SCRIPT =
+  "https://script.google.com/macros/s/AKfycbzx3vrD4zyZZ-o0LgjCnPuUy6jyn1j7mcpi3tWiy-ejVpCZh5n-zuqY7Tuazp4RDs34_w/exec";
+
+const ENTIDADES = [
+  {
+    id: "ent_1",
+    nombre: "Altos Mirandinos",
+    imagenUrl: "./imagenes/1.png",
+  },
+  {
+    id: "ent_2",
+    nombre: "Amazonas",
+    imagenUrl: "./imagenes/8.png",
+  },
+  {
+    id: "ent_3",
+    nombre: "Anzoátegui",
+    imagenUrl: "./imagenes/9.png",
+  },
+  {
+    id: "ent_4",
+    nombre: "Apure",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_5",
+    nombre: "Aragua",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_6",
+    nombre: "Barinas",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_7",
+    nombre: "Baruta",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_8",
+    nombre: "Bolívar",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_9",
+    nombre: "Carabobo",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_10",
+    nombre: "Cojedes",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_11",
+    nombre: "Delta Amacuro",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_12",
+    nombre: "Eje Barlovento",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_13",
+    nombre: "Eje Guarenas - Guatire",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_14",
+    nombre: "Falcón",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_15",
+    nombre: "La California",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_16",
+    nombre: "Lara",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_17",
+    nombre: "Libertador",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_18",
+    nombre: "Mérida",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_19",
+    nombre: "Monagas",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_20",
+    nombre: "Nueva Esparta",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_21",
+    nombre: "Portuguesa",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_22",
+    nombre: "Sucre",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_23",
+    nombre: "Táchira",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_24",
+    nombre: "Trujillo",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_25",
+    nombre: "Valles el Tuy",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_26",
+    nombre: "Yaracuy",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_27",
+    nombre: "Zulia",
+    imagenUrl: "./imagenes/10.png",
+  },
+  {
+    id: "ent_28",
+    nombre: "Sede Nacional",
+    imagenUrl: "./imagenes/10.png",
+  },
+];
