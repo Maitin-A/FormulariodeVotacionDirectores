@@ -153,7 +153,7 @@ if (votoCompletado) {
   panelConfirmacion.style.display = "block";
   btnEnviar.style.display = "none";
   resumenSeleccion.innerHTML =
-    "<strong>Ya has emitido tu voto desde este dispositivo.</strong>";
+    "<strong>Ya has emitido tu voto desde este dispositivo.</strong> <br> <br> <h1 style: 'color: #16a34a'>¡Muchas Gracias!</h1>";
 } else if (votanteGuardado) {
   const nombre =
     votanteGuardado === "JURADO" || votanteGuardado === "Jurado Calificador"
@@ -283,7 +283,7 @@ btnEnviar.addEventListener("click", async () => {
     gridObras.innerHTML = "";
     btnEnviar.style.display = "none";
     resumenSeleccion.innerHTML = `Tu voto por <strong>${obraSeleccionada.nombre}</strong> ha sido guardado exitosamente.`;
-    mensajeEstado.textContent = "¡Voto registrado con éxito!";
+    mensajeEstado.innerHTML = `¡Muchas gracias por tu voto! <br> <br>  ¡Voto registrado con éxito!`;
     mensajeEstado.style.color = "#16a34a";
   } catch (err) {
     mensajeEstado.textContent = "Error al conectar. Intenta nuevamente.";
