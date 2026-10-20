@@ -77,6 +77,7 @@ const SEDES = [
 ];
 let obraSeleccionada = null;
 let votanteActualId = null;
+let votanteActualNombre = null;
 
 // Elementos del selector
 const dropdownBtn = document.getElementById("dropdown-btn");
@@ -162,7 +163,7 @@ if (votoCompletado) {
 }
 
 function fijarIdentidad(valor, nombre) {
-  votanteActualId = valor;
+  votanteActualNombre = valor;
   dropdownTexto.textContent = nombre;
   dropdownBtn.disabled = true;
   dropdownBtn.classList.remove("active");
@@ -257,7 +258,7 @@ btnEnviar.addEventListener("click", async () => {
   const esJurado = votanteActualId === "JURADO";
   const nombreVotante = esJurado
     ? "Jurado Calificador"
-    : SEDES.find((s) => s.id === votanteActualId)?.nombre || votanteActualId;
+    : SEDES.find((s) => s.id === votanteActualNombre)?.nombre || votanteActualNombre;
 
   btnEnviar.disabled = true;
   mensajeEstado.textContent = "Registrando tu voto...";
