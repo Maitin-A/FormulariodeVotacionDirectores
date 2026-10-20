@@ -135,7 +135,7 @@ dropdownMenu.addEventListener("click", (e) => {
 
   if (
     confirm(
-      `¿Confirmas que representas a "${nombre}"?\nUna vez confirmado no podrás modificarlo.`,
+      `¿Confirmas que representas a "${nombre}"?\nUna vez confirmado no podrás modificarlo.`
     )
   ) {
     localStorage.setItem("votante_bloqueado_13aniv", valor);
@@ -156,14 +156,15 @@ if (votoCompletado) {
     "<strong>Ya has emitido tu voto desde este dispositivo.</strong>";
 } else if (votanteGuardado) {
   const nombre =
-    votanteGuardado === "JURADO"
+    votanteGuardado === "JURADO" || votanteGuardado === "Jurado Calificador"
       ? "Jurado Calificador"
-      : SEDES.find((s) => s.id === votanteGuardado)?.nombre;
+      : SEDES.find((s) => s.id === votanteGuardado)?.nombre || votanteGuardado;
   fijarIdentidad(votanteGuardado, nombre);
 }
 
 function fijarIdentidad(valor, nombre) {
-  votanteActualNombre = valor;
+  votanteActualId = valor; // <-- Asignamos el ID
+  votanteActualNombre = nombre; // <-- Asignamos el nombre de la sede o jurado
   dropdownTexto.textContent = nombre;
   dropdownBtn.disabled = true;
   dropdownBtn.classList.remove("active");
@@ -186,13 +187,13 @@ function cargarObras(votanteId) {
     card.className = "card-obra";
     card.id = `card-${item.id}`;
     card.innerHTML = `
-          <div class="img-wrapper" title="Haz clic para ampliar">
-            <img src="${item.imagenUrl}" alt="Obra de ${item.nombre}" loading="lazy">
-            <span class="zoom-hint">🔍 Ampliar</span>
-          </div>
-          <h3>${item.nombre}</h3>
-          <button type="button" class="btn-select">Votar por esta</button>
-        `;
+      <div class="img-wrapper" title="Haz clic para ampliar">
+        <img src="${item.imagenUrl}" alt="Obra de ${item.nombre}" loading="lazy">
+        <span class="zoom-hint">🔍 Ampliar</span>
+      </div>
+      <h3>${item.nombre}</h3>
+      <button type="button" class="btn-select">Votar por esta</button>
+    `;
 
     // Ampliar modal
     const wrapper = card.querySelector(".img-wrapper");
@@ -253,22 +254,22 @@ function seleccionarObra(item) {
 
 // Envío del voto
 btnEnviar.addEventListener("click", async () => {
-  if (!obraSeleccionada) return;
+  if (!obraSeleccionada || !votanteActualNombre) return;
 
-  const esJurado = votanteActualId === "JURADO";
-  const nombreVotante = esJurado
-    ? "Jurado Calificador"
-    : SEDES.find((s) => s.id === votanteActualNombre)?.nombre || votanteActualNombre;
+  const esJurado =
+    votanteActualId === "JURADO" || votanteActualNombre === "Jurado Calificador";
 
   btnEnviar.disabled = true;
   mensajeEstado.textContent = "Registrando tu voto...";
   mensajeEstado.style.color = "#475569";
 
   const payload = {
-    tipo: "jurado", // <-- Palabra clave para la pestaña de Jurado
+    tipo: esJurado ? "jurado" : "sede",
+    sedeVotante: votanteActualNombre, // Nombre explícito de la sede (o Jurado)
     votante: votanteActualNombre,
     votoPor: obraSeleccionada.nombre,
   };
+
 
   try {
     await fetch(URL_APPS_SCRIPT, {
